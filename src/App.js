@@ -1,12 +1,32 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import "./App.css";
+import React, { useState, useEffect } from "react";
 
 function App() {
-  return (
-    <div className="App">
-  hello
-    </div>
-  );
+  const [config, setConfig] = useState(null); // State to hold the configuration data
+
+  useEffect(() => {
+    // Fetch config.json on component mount
+    fetch("/config.json")
+      .then((response) => response.json())
+      .then((data) => {
+        setConfig(data);
+      })
+      .catch((error) => {
+        console.error("Error loading config:", error);
+      });
+  }, []);
+
+  if (config === null) {
+    console.log("loading config...");
+  }
+  else if (config) {
+    console.log("config found\n", config);
+  } else {
+    console.log("config not found");
+  }
+
+  return <div className="App"></div>;
 }
 
 export default App;
