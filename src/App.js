@@ -26,7 +26,10 @@ function App() {
     console.log("config not found");
   }
 
-  return <div className="App"></div>;
+  return <div className="App">
+    <div>Hello, World!</div>
+    <div>{config ? JSON.stringify(config, null, 2) : "Config not found"}</div>
+  </div>;
 }
 
 export default App;
