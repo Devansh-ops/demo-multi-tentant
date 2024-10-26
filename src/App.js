@@ -7,7 +7,7 @@ function App() {
 
   useEffect(() => {
     // Fetch config.json on component mount
-    fetch("/config.json")
+    fetch("./config.json")
       .then((response) => response.json())
       .then((data) => {
         setConfig(data);

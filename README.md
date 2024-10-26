@@ -68,3 +68,10 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+## Give permission
+```bash
+sudo chown -R www-data:www-data /var/www/html/myco/dev.my-company.app/crm_multi_tenant/build
+sudo chmod -R 755 /var/www/html/myco/dev.my-company.app/crm_multi_tenant/build
+```

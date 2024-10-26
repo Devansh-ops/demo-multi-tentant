@@ -18,7 +18,7 @@ function ConfigLoader() {
   const [tenantExists, setTenantExists] = useState(null); // Boolean state to track tenant existence
 
   useEffect(() => {
-    fetch("/config.json")
+    fetch("./config.json")
       .then((response) => response.json())
       .then((config) => {
         // Check if tenantPath exists in the config
