@@ -1,77 +1,55 @@
-# Getting Started with Create React App
+# Multi-Tenant React Frontend Setup
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This guide shows how to make a React app serve each tenant its own settings. It pulls the right data based on the URL path, keeping it simple and clear. Each client sees only what they need. The setup is clean, flexible, and ready for many users.
 
-## Available Scripts
+## Key Configuration Steps
 
-In the project directory, you can run:
+1. **Use Relative Paths**: Use relative paths throughout the codebase to maintain flexibility across different deployment contexts.
+2. **Set `homepage` in `package.json`**: Set `"homepage": "."` in `package.json`. This configures the app to reference assets and public files relative to the current path, enabling seamless access to resources for each tenant.
+3. **Create Tenant Configurations in `config.json`**: Place a `config.json` file containing tenant-specific data in the `public` folder. This configuration should include all client-specific settings.
+4. **Load Client Data Dynamically**: Fetch `config.json` in the app, and use `window.location.pathname` to determine the client-specific configuration dynamically. This approach allows the app to serve customized content based on the current URL path.
 
-### `npm start`
+## Supporting Configurations
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Apache Configuration
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Configure Apache with `Alias` directives to map multiple tenant paths to the same application build folder, allowing each tenant to have a unique URL path:
 
-### `npm test`
+```apache
+<VirtualHost *:80>
+    ServerName dev.placeholder-domain.com
+    ServerAdmin webmaster@localhost
+    DocumentRoot /var/www/html/placeholder_path
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+    # Tenant Aliases
+    Alias /tenant1/path /var/www/html/placeholder_path/build
+    Alias /tenant2/path /var/www/html/placeholder_path/build
+    Alias /tenant3/path /var/www/html/placeholder_path/build
 
-### `npm run build`
+    <Directory /var/www/html/placeholder_path/build>
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-
-
-## Give permission
-```bash
-sudo chown -R www-data:www-data /var/www/html/myco/dev.my-company.app/crm_multi_tenant/build
-sudo chmod -R 755 /var/www/html/myco/dev.my-company.app/crm_multi_tenant/build
+    ErrorLog ${APACHE_LOG_DIR}/placeholder-error.log
+    CustomLog ${APACHE_LOG_DIR}/placeholder-access.log combined
+</VirtualHost>
 ```
+
+**Explanation**:
+- Each `Alias` directive maps a unique URL path to the React app’s build directory.
+- `AllowOverride All` and `Require all granted` ensure that the configuration is applied and accessible to all requests.
+
+### Setting Directory Permissions
+
+Ensure the Apache server has the necessary permissions to read and serve files from the build directory:
+
+```bash
+sudo chown -R www-data:www-data /var/www/html/placeholder_path/build
+sudo chmod -R 755 /var/www/html/placeholder_path/build
+```
+
+This setup enables the server to access the build directory, while appropriate permissions ensure a secure environment for serving static content.
+
+---
