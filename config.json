@@ -3,5 +3,6 @@
     "client_host" : "temp_client_host",
     "client_id" : "1",
     "backend_url" : "temp_backend_url"
-  }
+  },
+  "multi-tenant-demo": {}
 }
